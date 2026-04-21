@@ -1,0 +1,29 @@
+{
+  "name": "eventflow-mern-event-booking-",
+  "version": "1.0.0",
+  "description": "A full-stack Event Management System built using the MERN stack (MongoDB, Express.js, React.js, Node.js) that allows users to explore, book, and manage events seamlessly.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chandangorain/EventFlow-Mern-Event-Booking-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chandangorain/EventFlow-Mern-Event-Booking-/issues"
+  },
+  "homepage": "https://github.com/Chandangorain/EventFlow-Mern-Event-Booking-#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.5.0",
+    "nodemailer": "^8.0.5"
+  }
+}
