@@ -9,7 +9,7 @@ const connectToDB = require('./config/db');
 const app = express();
 connectToDB();
 app.use(cors()); 
-
+app.use(express.json()); // Middleware to parse JSON bodies
 //Routes
 app.use('/api/auth', authRoutes);
 
