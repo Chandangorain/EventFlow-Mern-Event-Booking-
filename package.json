@@ -4,7 +4,10 @@
   "description": "A full-stack Event Management System built using the MERN stack (MongoDB, Express.js, React.js, Node.js) that allows users to explore, book, and manage events seamlessly.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+
   },
   "repository": {
     "type": "git",
@@ -25,5 +28,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.5.0",
     "nodemailer": "^8.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
