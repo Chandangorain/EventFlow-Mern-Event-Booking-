@@ -2,12 +2,17 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const authRoutes = require('./routes/auth');
 dotenv.config();
 const connectToDB = require('./config/db');
 
 const app = express();
 connectToDB();
 app.use(cors()); 
+
+//Routes
+app.use('/api/auth', authRoutes);
+
 // connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
