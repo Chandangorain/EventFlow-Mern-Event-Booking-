@@ -38,6 +38,7 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
 
 const sendOTPEmail = async (userEmail, otp, type) => {
     try {
+        // when user register this will be used by registercontroller @authcontroller.js .
         const title = type === 'account_verification' ? 'Verify your Eventflow Account' : 'Eventflow Booking Verification';
         const msg = type === 'account_verification'
             ? 'Please use the following OTP to verify your new Eventflow account.'
