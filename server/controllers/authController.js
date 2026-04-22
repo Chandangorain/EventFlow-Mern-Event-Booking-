@@ -62,10 +62,13 @@ exports.loginUser=async(req,res)=>{
             await OTP.findOneAndDelete({ email: user.email, action: 'account_verification' });
             await OTP.create({ email: user.email, otp, action: 'account_verification' });
             await sendOTPEmail(user.email, otp, 'account_verification');
-            return res.status(403).json({ message: 'Account not verified', needsVerification: true, email: user.email });
+            return res.status(400).json({
+                 message: 'Account not verified.A new OTP has been sent to your email.', needsVerification: true, email: user.email 
+                });
         }
 
         res.json({
+            message:'Login successful',
             _id:user.id,
             name:user.name,
             email:user.email,
