@@ -91,9 +91,10 @@ exports.verifyOTP = async (req, res) => {
         }
 
         const user = await User.findOneAndUpdate({ email }, { isVerified: true }, { new: true });
-        await OTP.deleteOne({ _id: validOTP._id }); // Delete OTP after usage
+        await OTP.deleteOne({ _id: validOTP._id }); // Delete the account verification OTP after usage
 
         res.json({
+            message: 'Account verified successfully',
             _id: user.id,
             name: user.name,
             email: user.email,
