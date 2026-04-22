@@ -11,6 +11,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Function to send booking confirmation email to the user
+
 const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     try {
         const mailOptions = {
