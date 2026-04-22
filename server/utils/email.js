@@ -19,8 +19,10 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
             from: process.env.EMAIL_USER,
             to: userEmail,   // User's email address coming from the frontend
             subject: `Booking Confirmed: ${eventTitle}`,
+
+            // Simple HTML to give a proper format good message to user
             html: `
-        <h2>Hi ${userName}!</h2>
+        <h2>Hi ${userName}!</h2>            /
         <p>Your booking for the event <strong>${eventTitle}</strong> is successfully confirmed.</p>
         <p>Thank you for choosing Eventora.</p>
       `
