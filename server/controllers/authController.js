@@ -19,7 +19,8 @@ exports.registerUser = async (req, res) => {
         res.status(201).json({message:'User registered successfully'})
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
-        console.log(`Generated OTP for ${email}: ${otp}`); 
+        console.log(` OTP for ${email}: ${otp}`); 
+        await sendOTPEmail(email, otp, 'account_verification'); // Send OTP email for account verification
 
         user.otp=otp;
 
