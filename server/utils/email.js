@@ -15,7 +15,7 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     try {
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: userEmail,
+            to: userEmail,   // User's email address coming from the frontend
             subject: `Booking Confirmed: ${eventTitle}`,
             html: `
         <h2>Hi ${userName}!</h2>
@@ -29,6 +29,8 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
         console.error('Error sending email:', error);
     }
 };
+
+// otp sent to user for account verification and booking verification
 
 const sendOTPEmail = async (userEmail, otp, type) => {
     try {
