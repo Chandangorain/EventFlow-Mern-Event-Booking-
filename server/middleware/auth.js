@@ -10,7 +10,7 @@ const protect=async(req,res,next)=>{
 
        try{
         const decoded=jwt.verify(token,process.env.JWT_SECRET);
-        req.user=await User.findById(decoded.id).select('-password');  // find user by id and exclude password in database
+        req.user=await User.findById(decoded.id).select('-password');  // all info is save in req.user and find user by id and exclude password in database
         
         if(!req.user){
             return res.status(401).json({message:'User not found'});
@@ -35,3 +35,5 @@ const admin=(req,res,next)=>{
         return res.status(403).json({message:'Access denied. Admin only.'});
     }
 }
+
+module.exports={protect,admin};
