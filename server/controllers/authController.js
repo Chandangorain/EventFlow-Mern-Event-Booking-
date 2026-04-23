@@ -1,83 +1,71 @@
 const User = require('../models/User');
-const otp=require('../models/otp');
-const bcrypt=require('bcryptjs');
-const jwt=require('jsonwebtoken');
+const OTP = require('../models/OTP');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { sendOTPEmail } = require('../utils/email');
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 const generateToken = (id, role) => {
-    return jwt.sign( 
-        { id, role }, 
-        process.env.JWT_SECRET, 
-        { expiresIn: '30d' }
-    );
+    return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-//register user controller  : req.body → validate → check user → hash password → generate OTP → save in DB → send email → response
-exports.registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
-    let userExists = await User.findOne({ email });
+exports.register = async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+        let user = await User.findOne({ email });
+        if (user) return res.status(400).json({ message: 'User already exists' });
 
-    if (userExists) {
-        return res.status(400).json({ message: 'User already exists' });
-    }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-    const salt=await bcrypt.genSalt(10);    // salting 
-    const hashedPassword=await bcrypt.hash(password,salt);      //hashing the pass
-
-    try{
-        const user=new Usercreate({name,email,password:hashedPassword,role:'user',isVerified:false});
-        await user.save();
-       
-        const otp=generateOTP(); // Generate a 6-digit OTP
-        console.log(` OTP for ${email}: ${otp}`); 
-         await OTP.create({ email, otp, action: 'account_verification' }); // Store OTP in DB 
-        await sendOTPEmail(email, otp, 'account_verification'); // Send OTP . messge of account verification from email.js will be used to ssend here to user
-
-       
-        res.status(201).json({ 
-            message: 'User registered successfully. Please check your email for OTP to verify your account.' ,
-            email:user.email
+        user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: 'user', // Hardcoded to prevent frontend passing role
+            isVerified: false
         });
-        
 
-    }catch(err){
-        res.status(500).json({message:'Error registering user',error:err.message})
+        const otp = generateOTP();
+        await OTP.create({ email, otp, action: 'account_verification' });
+        await sendOTPEmail(email, otp, 'account_verification');
+
+        res.status(201).json({
+            message: 'OTP sent to email. Please verify.',
+            email: user.email
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
-} ;
+};
 
-//loginUser controller : req.body → validate → check user → compare password → generate token → response
-exports.loginUser=async(req,res)=>{
-    try{
-        const {email,password}=req.body;
-        const user=await User.findOne({email});
-        if(!user){
-            return res.status(400).json({message:'Invalid credentials'});
-        }
-        const isMatch=await bcrypt.compare(password,user.password)
-        if(!isMatch)return res.status(400).json({message:'Invalid credentials'});
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-       if (!user.isVerified && user.role !== 'admin') {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+        if (!user.isVerified && user.role !== 'admin') {
             const otp = generateOTP();
             await OTP.findOneAndDelete({ email: user.email, action: 'account_verification' });
             await OTP.create({ email: user.email, otp, action: 'account_verification' });
             await sendOTPEmail(user.email, otp, 'account_verification');
-            return res.status(400).json({
-                 message: 'Account not verified.A new OTP has been sent to your email.', needsVerification: true, email: user.email 
-                });
+            return res.status(403).json({ message: 'Account not verified', needsVerification: true, email: user.email });
         }
 
         res.json({
-            message:'Login successful',
-            _id:user.id,
-            name:user.name,
-            email:user.email,
-            role:user.role,
-            token: generateToken(user._id,user.role)
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user.id, user.role)
         });
-    } catch(err){
-        res.status(500).json({message:'Error logging in',error:err.message});
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
@@ -91,10 +79,9 @@ exports.verifyOTP = async (req, res) => {
         }
 
         const user = await User.findOneAndUpdate({ email }, { isVerified: true }, { new: true });
-        await OTP.deleteOne({ _id: validOTP._id }); // Delete the account verification OTP after usage
+        await OTP.deleteOne({ _id: validOTP._id }); // Delete OTP after usage
 
         res.json({
-            message: 'Account verified successfully',
             _id: user.id,
             name: user.name,
             email: user.email,
