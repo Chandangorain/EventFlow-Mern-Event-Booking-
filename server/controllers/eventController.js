@@ -11,7 +11,10 @@ const getAllEvents = async (req, res) => {
         if(re.query.location){
             filters.location=req.query.location;    
         }
-        const events = await Event.find();  
+        if(req.query.ticketPrice){
+            filters.ticketPrice=req.query.ticketPrice;
+        }
+        const events = await Event.find(filters);  
         res.json(events);
     }
     catch (error) {
