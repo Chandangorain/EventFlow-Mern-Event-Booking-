@@ -1,6 +1,7 @@
 const booking=require('../models/bookings');
 const event = require('../models/Event');
 const event=require('../models/Event');
+const otp = require('../models/otp');
 const OTP=require('../models/otp');
 const {sendEmail,sendBookingEmail} = require('../utils/emailService');  
 
@@ -38,4 +39,25 @@ exports.bookEvent=async(req,res)=>{
         if (existingBooking && existingBooking.status !== 'cancelled') {
             return res.status(400).json({ message: 'Already booked or pending' });
         }
+         const booking = await Booking.create({
+            userId: req.user.id,
+            eventId,
+            status: 'pending',
+            paymentStatus: 'not_paid',
+            amount: event.ticketPrice
+        });
+
+        await OTP.deleteMany({ email: req.user.email, action: 'event_booking' });
+        //await sendBookingEmail(req.user.email, event.title, booking._id);
+
+        res.status(201).json({ message: 'Booking created. Please complete payment.', bookingId: booking._id });
+
+        
+}
+
+exports.confirmBooking=async(req,res)=>{{
+    const booking=await Booking.findById(req.params.id).populate('eventId');Booking.findOnyById(req.params.id).populate('eventId');
+    if(!booking){
+        return res.status(404).json({message:'Booking not found'}); 
+    }
 }
