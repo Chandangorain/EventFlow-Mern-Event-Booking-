@@ -54,10 +54,42 @@ exports.bookEvent=async(req,res)=>{
 
         
 }
-
+// confirm booking by admin ;
+/* flow : Request → Get booking → Validate →
+Check seats → Confirm booking →
+Reduce seats → Save →
+Send email → Respond */
 exports.confirmBooking=async(req,res)=>{{
-    const booking=await Booking.findById(req.params.id).populate('eventId');Booking.findOnyById(req.params.id).populate('eventId');
-    if(!booking){
-        return res.status(404).json({message:'Booking not found'}); 
+    try {
+        const { paymentStatus } = req.body; // 'paid' or 'not_paid'  from req.body
+
+        //fetch booking fromDB. .populate('userId') -> replaces userId with full user object ; .populate('eventId') -> replaces eventId with full event object
+        const booking = await Booking.findById(req.params.id).populate('userId').populate('eventId');
+        if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+        if (booking.status === 'confirmed') return res.status(400).json({ message: 'Booking is already confirmed' });
+
+        const event = await Event.findById(booking.eventId._id);
+        if (event.availableSeats <= 0) {
+            return res.status(400).json({ message: 'No seats available to confirm this booking' });
+        }
+
+        booking.status = 'confirmed';
+        if (paymentStatus) {
+            booking.paymentStatus = paymentStatus;
+        }
+        await booking.save();
+
+        event.availableSeats -= 1;   // Decrease available seats while confirming booking
+        await event.save();
+
+        // Send email on admin confirmation
+        await sendBookingEmail(booking.userId.email, booking.userId.name, booking.eventId.title);
+
+        res.json({ message: 'Booking confirmed successfully', booking });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
+ }
 }
