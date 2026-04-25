@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
         });
 
         const otp = generateOTP();
-        await OTP.create({ email, otp, action: 'account_verification' });
+        await OTP.create({  email: user.email, otp, action: 'account_verification' });
         await sendOTPEmail(email, otp, 'account_verification');
 
         res.status(201).json({
