@@ -92,4 +92,11 @@ exports.confirmBooking=async(req,res)=>{{
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
  }
+};
+
+exports.getMyBookings=async(req,res)=>{
+    
+        const bookings=await Booking.find({userId:req.user.id}).populate('eventId');
+        res.json(bookings);
+    
 }
