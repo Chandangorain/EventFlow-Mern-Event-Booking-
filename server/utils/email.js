@@ -11,20 +11,16 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Function to send booking confirmation email to the user
-
 const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     try {
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: userEmail,   // User's email address coming from the frontend
+            to: userEmail,
             subject: `Booking Confirmed: ${eventTitle}`,
-
-            // Simple HTML to give a proper format good message to user
             html: `
-        <h2>Hi ${userName}!</h2>            /
+        <h2>Hi ${userName}!</h2>
         <p>Your booking for the event <strong>${eventTitle}</strong> is successfully confirmed.</p>
-        <p>Thank you for choosing Eventflow.</p>
+        <p>Thank you for choosing Eventora.</p>
       `
         };
         await transporter.sendMail(mailOptions);
@@ -32,16 +28,13 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     } catch (error) {
         console.error('Error sending email:', error);
     }
-}; 
-
-// otp sent to user for account verification and booking verification
+};
 
 const sendOTPEmail = async (userEmail, otp, type) => {
     try {
-        // when user register this will be used by registercontroller @authcontroller.js .
-        const title = type === 'account_verification' ? 'Verify your Eventflow Account' : 'Eventflow Booking Verification';
+        const title = type === 'account_verification' ? 'Verify your Eventora Account' : 'Eventora Booking Verification';
         const msg = type === 'account_verification'
-            ? 'Please use the following OTP to verify your new Eventflow account.'
+            ? 'Please use the following OTP to verify your new Eventora account.'
             : 'Please use the following OTP to verify and confirm your event booking.';
 
         const mailOptions = {

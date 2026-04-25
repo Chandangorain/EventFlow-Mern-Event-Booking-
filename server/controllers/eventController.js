@@ -1,43 +1,28 @@
+const Event = require('../models/Event');
 
-const Event = require('../models/event');
-
-// Get all events
-exports.getAllEvents = async (req, res) => {
+exports.getEvents = async (req, res) => {
     try {
-        const filters={};       // applying filter for category and location
-        if(req.query.category){
-            filters.category=req.query.category;
-        }
-        if(re.query.location){
-            filters.location=req.query.location;    
-        }
-        if(req.query.ticketPrice){
-            filters.ticketPrice=req.query.ticketPrice;
-        }
-        const events = await Event.find(filters);  
+        const filters = {};
+        if (req.query.category) filters.category = req.query.category;
+        if (req.query.search) filters.title = { $regex: req.query.search, $options: 'i' };
+
+        const events = await Event.find(filters).populate('createdBy', 'name email');
         res.json(events);
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
-// get event
 exports.getEventById = async (req, res) => {
-    try{
-        const event=await Event.findbyId(req.params.id);
-        if(!event){
-            return res.status(404).json({message:'Event not found'});
-        } 
+    try {
+        const event = await Event.findById(req.params.id).populate('createdBy', 'name email');
+        if (!event) return res.status(404).json({ message: 'Event not found' });
         res.json(event);
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
-
-// create new event only admin can create event
 exports.createEvent = async (req, res) => {
     try {
         const { title, description, date, location, category, totalSeats, ticketPrice, image } = req.body;
@@ -59,9 +44,7 @@ exports.createEvent = async (req, res) => {
     }
 };
 
-// update event only admin can update event
-exports.updateEvent=async(req,res)=>{
-
+exports.updateEvent = async (req, res) => {
     try {
         const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!event) return res.status(404).json({ message: 'Event not found' });
@@ -71,17 +54,12 @@ exports.updateEvent=async(req,res)=>{
     }
 };
 
-// delete event only admin can delete event
-exports.deleteEvent=async(req,res)=>{
+exports.deleteEvent = async (req, res) => {
     try {
-        const event=await Event.findByIdAndDelete(req.params.id);
-        if(!event) {
-            return res.status(404).json({message:'Event not found'});
-        }
-        res.json({message:'Event deleted successfully'});
-
-    }catch (error) {
+        const event = await Event.findByIdAndDelete(req.params.id);
+        if (!event) return res.status(404).json({ message: 'Event not found' });
+        res.json({ message: 'Event deleted successfully' });
+    } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
-  
     }
 };
