@@ -1,9 +1,7 @@
 const booking=require('../models/bookings');
-const event = require('../models/Event');
-const event=require('../models/Event');
-const otp = require('../models/otp');
-const OTP=require('../models/otp');
-const {sendEmail,sendBookingEmail} = require('../utils/emailService');  
+const event=require('../models/event');
+const  OTP= require('../models/otp');
+const {sendEmail,sendBookingEmail} = require('../utils/email');  
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();   
 
