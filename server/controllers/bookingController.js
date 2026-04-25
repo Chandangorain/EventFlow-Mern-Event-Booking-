@@ -59,7 +59,7 @@ exports.bookEvent=async(req,res)=>{
 Check seats → Confirm booking →
 Reduce seats → Save →
 Send email → Respond */
-exports.confirmBooking=async(req,res)=>{{
+exports.confirmBooking=async(req,res)=>{
     try {
         const { paymentStatus } = req.body; // 'paid' or 'not_paid'  from req.body
 
@@ -91,7 +91,7 @@ exports.confirmBooking=async(req,res)=>{{
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
- }
+ 
 };
 
 exports.getMyBookings=async(req,res)=>{
@@ -99,4 +99,38 @@ exports.getMyBookings=async(req,res)=>{
         const bookings=await Booking.find({userId:req.user.id}).populate('eventId');
         res.json(bookings);
     
+}
+
+
+//cancellation controlller
+exports.cancelBooking=async(req,res)=>{
+   try{
+   
+    const booking=await Booking.findById(req.params.id).populate('eventId')
+    if(!booking){
+        return res.status(404).json({message:'Booking not found'});
+    }
+    if(booking.userId.toString()!==req.user.id){
+        return res.status(403).json({message:'Unauthorized'});
+    }
+    if(booking.status==='cancelled'){
+        return res.status(400).json({message:'Booking already cancelled'});
+    }
+    const wasConfirmed = booking.status === 'confirmed';
+    booking.status='cancelled';
+    await booking.save();
+
+    if(wasConfirmed){
+        const event=await Event.findById(booking.eventId);
+        if(event){
+            event.availableSeats += 1;   // Increase available seats on cancellation
+            await event.save();
+        }
+    }
+    res.json({message:'Booking cancelled successfully'});
+    }
+    catch (error) {   
+     res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+
 }
