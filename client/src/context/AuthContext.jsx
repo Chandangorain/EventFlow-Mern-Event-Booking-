@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {   //authprovider is a wrapper , 
         try {
             const { data } = await api.post('/auth/login', { email, password });   //call backend api
             setUser(data);      // store data in user state
-            localStorage.setItem('userInfo', JSON.stringify(data));
+            localStorage.setItem('userInfo', JSON.stringify(data)); // save user + bearer token in browser
             localStorage.setItem('token', data.token);
             return data;
         } catch (error) {
