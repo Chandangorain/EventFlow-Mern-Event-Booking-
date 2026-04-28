@@ -1,8 +1,8 @@
 // here we write the code to create axios with communication with backend
 
-import axios from('axios');
+import axios from 'axios';
 
-const api=axios.create({
+const api=axios.create({                // custom axios object
     baseURL:'http://localhost:5000/api',
     headers:{
         'Content-Type':'application/json'
@@ -14,7 +14,7 @@ api.interceptors.request.use((config)=>{
     if(token){
         config.headers['Authorization']=`Bearer ${token}`;
     }
-    return config;
+    return config;      //Sends modified request forward to backend
 });
 
 export default api;

@@ -7,7 +7,7 @@ import React from 'react';
 
 export const AuthContext = React.createContext(); //create a global container
 
-export const AuthProvider = ({ children }) => {   //authprovider is a wrapper , wrap all in app.jsx
+export const AuthProvider = ({ children }) => {   //authprovider is a wrapper , wrap all in main.jsx
     const [user, setUser] = React.useState(null);
     const [loading, setLoading] = React.useState(true);  //loading setloading used to prevent UI from rendering before auth check completes
 
