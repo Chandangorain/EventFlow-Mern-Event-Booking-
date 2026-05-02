@@ -22,13 +22,13 @@ const Navbar = () => {
                     <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
                         <Link to="/" className="text-gray-200 hover:text-white transition cursor-pointer">Events</Link>
                         {user ? (
-                            <>
+                            <>  {/* if user is admin , go to the admin route  and if user is not admin then go to the dashboard*/}
                                 <Link to={user.role === 'admin' ? '/admin' : '/dashboard'} className="text-gray-200 hover:text-white transition">Dashboard</Link>
                                 <button onClick={handleLogout} className="bg-gray-700 hover:bg-black text-white px-4 py-2 rounded-md transition">Logout</button>
                             </>
                         ) : (
                             <>
-                                <Link to="/login" className="text-gray-200 hover:text-white transition">Login</Link>
+                                <Link to="/login" className="text-gray-200 hover:text-white transition">Login</Link>    
                                 <Link to="/register" className="bg-white text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md font-semibold transition">Sign Up</Link>
                             </>
                         )}
