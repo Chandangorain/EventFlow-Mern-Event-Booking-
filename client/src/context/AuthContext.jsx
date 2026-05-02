@@ -3,7 +3,8 @@
 Context API to make auth data available everywhere.
 So, AuthContext.jsx acts like a central place (global store) for authentication.
 */
-import React from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import api from '../utils/axios';
 
 export const AuthContext = React.createContext(); //create a global container
 

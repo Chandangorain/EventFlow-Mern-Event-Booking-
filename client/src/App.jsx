@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Navbar from './components/Navbar'; // adjust path if needed
 import Login from './pages/Login';
 import Register from './pages/Register';
+import UserDashboard from './pages/UserDashboard';
 function App() {
   return (
     <Router>
@@ -14,6 +15,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
              
           </Routes>
         </main>
