@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Register=()=>{
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -10,6 +11,8 @@ const Register=()=>{
     const [showOTP, setShowOTP] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false); // 🔥 ADDED
 
     const { register, verifyOTP } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -56,6 +59,7 @@ const Register=()=>{
                                 onChange={(e) => setName(e.target.value)}
                             />
                         </div>
+
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                             <input
@@ -66,15 +70,27 @@ const Register=()=>{
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        <div>
+
+                        {/* 🔥 PASSWORD FIELD UPDATED */}
+                        <div className="relative">
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"} // 🔥 CHANGED
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 transition shadow-sm"
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 transition shadow-sm pr-12"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+
+                            {/* 🔥 EYE BUTTON */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)} // 🔥 TOGGLE
+                                className="absolute right-3 top-10 text-gray-500 hover:text-gray-800"
+                            >
+                                {showPassword ? "🙈" : "👁️"} {/* simple icon */}
+                            </button>
                         </div>
                     </>
                 ) : (
@@ -111,5 +127,6 @@ const Register=()=>{
             )}
         </div>
     );
-
 }
+
+export default Register;
