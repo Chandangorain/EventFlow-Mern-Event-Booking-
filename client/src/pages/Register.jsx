@@ -12,7 +12,7 @@ const Register=()=>{
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const [showPassword, setShowPassword] = useState(false); // 🔥 ADDED
+    const [showPassword, setShowPassword] = useState(false); //  ADDED for show password icon
 
     const { register, verifyOTP } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -89,7 +89,7 @@ const Register=()=>{
                                 onClick={() => setShowPassword(!showPassword)} // 🔥 TOGGLE
                                 className="absolute right-3 top-10 text-gray-500 hover:text-gray-800"
                             >
-                                {showPassword ? "🙈" : "👁️"} {/* simple icon */}
+                                {showPassword ? "🔒" : "👁️"} {/* simple icon */}
                             </button>
                         </div>
                     </>

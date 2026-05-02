@@ -3,42 +3,43 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Login=() =>{
-     const [email, setEmail] = useState('');
+
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState('');
     const [showOTP, setShowOTP] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-     const { login, verifyOTP } = useContext(AuthContext);
+    const [showPassword, setShowPassword] = useState(false); // 🔥 ADDED
+
+    const { login, verifyOTP } = useContext(AuthContext);
     const navigate = useNavigate();
 
-
-    const handleSubmit =async(e)=>{
-
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
         try{
             if(!showOTP){
-                const data = login(email,password);
-                if(data.role=='admin')navigate ('/admin');
-                else navigate('/dashboard');
-            }else{
-                const data = await verifyOTP(email,otp);
-                if(data.role=='admin')navigate ('/admin');
+                const data = await login(email,password); // 🔥 FIXED (added await)
+
+                if(data.role=='admin') navigate('/admin');
                 else navigate('/dashboard');
 
+            }else{
+                const data = await verifyOTP(email,otp);
+
+                if(data.role=='admin') navigate('/admin');
+                else navigate('/dashboard');
             }
 
         }catch(err){
             if(err.needsVerification){
                 setShowOTP(true);
                 setError('Account not verified. New otp has been sent to email !');
-                
             }else{
                 setError(err.message||err);
-
             }
 
         }finally{
@@ -68,15 +69,27 @@ const Login=() =>{
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        <div>
+
+                        {/* 🔥 PASSWORD FIELD UPDATED */}
+                        <div className="relative">
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"} // 🔥 CHANGED
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 focus:border-gray-700 transition shadow-sm"
+                                className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 focus:border-gray-700 transition shadow-sm"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+
+                            {/* 🔥 EYE BUTTON */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)} // 🔥 TOGGLE
+                                className="absolute right-3 top-10 text-gray-500 hover:text-gray-800"
+                            >
+                                {showPassword ? "🔒" : "👁️"}
+                            </button>
                         </div>
                     </>
                 ) : (
@@ -93,6 +106,7 @@ const Login=() =>{
                         />
                     </div>
                 )}
+
                 <button
                     type="submit"
                     disabled={loading}
@@ -107,7 +121,6 @@ const Login=() =>{
             </p>
         </div>
     );
-
 };
 
 export default Login;
