@@ -50,7 +50,7 @@ const EventDetail = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const { data } = await api.get(`/events/${id}`);
+                const { data } = await api.get(`/events/${id}`);   // fetch event details by ID froom backend
                 setEvent(data);
             } catch (err) {
                 setError('Failed to load event details.');
@@ -72,7 +72,7 @@ const EventDetail = () => {
 
         try {
             if (!showOTP) {
-                await api.post('/bookings/send-otp');
+                await api.post('/bookings/send-otp');   // send booking OTP to user's email
                 setShowOTP(true);
                 setSuccessMsg('OTP sent to your email. Please verify to confirm booking.');
             } else {

@@ -1,31 +1,35 @@
-const booking=require('../models/Booking');
-const event=require('../models/Event');
+const Booking   =require('../models/Booking');
+const Event= require('../models/Event');
 const  OTP= require('../models/Otp');
-const {sendEmail,sendBookingEmail} = require('../utils/email');  
+const { sendBookingEmail, sendOTPEmail } = require('../utils/email');
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();   
-
 
 exports.sendBookingOTP=async(req,res)=>{  // generate otp->if previous otp exisist , delete -> generate and send otp
     try {
         const otp = generateOTP();
         await OTP.findOneAndDelete({ email: req.user.email, action: 'event_booking' });
-        await OTP.create({ email: req.user.email, otp, action: 'event_booking' });
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
+        await OTP.create({ email: req.user.email, otp, action: 'event_booking', expiresAt });
+     
         await sendOTPEmail(req.user.email, otp, 'event_booking');
         res.json({ message: 'OTP sent successfully' });
     } catch (error) {
+        console.error('Error sending OTP:', error);
         res.status(500).json({ message: 'Error sending OTP', error: error.message });
     }
 }
 
 //book event and seat availbility check and otp verification
 exports.bookEvent=async(req,res)=>{
-    const otpRecord=await OTP.findOne({email:req.user.email, action:'event_booking'});
-    if(!otpRecord ){
+    
+    const { eventId, otp } = req.body;
+    const validOTP=await OTP.findOne({email:req.user.email, action:'event_booking'});
+    if(!validOTP ){
         return res.status(400).json({message:'Invalid or expired OTP'});
     }
 
-    const event=await Event.findbyId(eventId);
+    const event=await Event.findById(eventId);
     if(!event){
         return res.status(404).json({message:'Event not found'});
     }
@@ -99,7 +103,6 @@ exports.getMyBookings=async(req,res)=>{
     
 }
 
-
 //cancellation controlller
 exports.cancelBooking=async(req,res)=>{
    try{
@@ -132,3 +135,5 @@ exports.cancelBooking=async(req,res)=>{
     }
 
 }
+
+
