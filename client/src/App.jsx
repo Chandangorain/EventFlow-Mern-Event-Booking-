@@ -4,6 +4,7 @@ import EventDetail from './pages/EventDetail';
 import Navbar from './components/Navbar'; // adjust path if needed
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/events/:id" element={<EventDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/dashboard" element={<UserDashboard />} />
              
           </Routes>
