@@ -1,3 +1,33 @@
+/*
+User clicks "View Details"
+        ↓
+React Router loads EventDetail page
+        ↓
+useParams() extracts event ID from URL
+        ↓
+useEffect runs → API call (/events/:id)
+        ↓
+Event data stored in state
+        ↓
+UI renders event details
+        ↓
+User clicks "Confirm Registration"
+        ↓
+Check: user logged in?
+        ↓
+   YES → send OTP
+   NO  → redirect to login
+        ↓
+User enters OTP
+        ↓
+Verify OTP → create booking
+        ↓
+Update UI (success + reduce seats)
+*/
+
+
+
+
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/axios';
@@ -16,6 +46,7 @@ const EventDetail = () => {
     const [error, setError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
 
+    // Fetch event details 
     useEffect(() => {
         const fetchEvent = async () => {
             try {
@@ -30,7 +61,7 @@ const EventDetail = () => {
         fetchEvent();
     }, [id]);
 
-    const handleBooking = async () => {
+    const handleBooking = async () => { // check if user is logged in before booking
         if (!user) {
             navigate('/login');
             return;
