@@ -17,10 +17,10 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         if (!user || user.role !== 'admin') {
-            navigate('/login');
+            navigate('/login'); // if not admin, redirect to login (or you could show an unauthorized message instead)
             return;
         }
-        fetchData();
+        fetchData();    // if admin fetch all events and bookings to manage
     }, [user, navigate]);
 
     const fetchData = async () => {
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     };
 
     const handleCreateEvent = async (e) => {
-        e.preventDefault();
+        e.preventDefault();  //submit form-> no refresh -> react handle submission
         try {
             await api.post('/events', formData);
             setShowEventForm(false);
