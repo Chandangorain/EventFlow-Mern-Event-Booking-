@@ -102,6 +102,26 @@ exports.getMyBookings=async(req,res)=>{
         res.json(bookings);
     
 }
+// <-- ADD THIS NEW CONTROLLER BELOW getMyBookings
+
+exports.getAllBookings = async (req, res) => {
+
+    try {
+
+        const bookings = await Booking.find()
+            .populate('userId', 'name email')
+            .populate('eventId');
+
+        res.json(bookings);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: 'Server Error',
+            error: error.message
+        });
+    }
+}
 
 //cancellation controlller
 exports.cancelBooking=async(req,res)=>{
